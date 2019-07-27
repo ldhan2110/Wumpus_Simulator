@@ -1,0 +1,10 @@
+D:\Study\Source Code\C#\Wumpus\Wumpus\bin\Debug\Wumpus.exe.config
+D:\Study\Source Code\C#\Wumpus\Wumpus\bin\Debug\Wumpus.exe
+D:\Study\Source Code\C#\Wumpus\Wumpus\bin\Debug\Wumpus.pdb
+D:\Study\Source Code\C#\Wumpus\Wumpus\obj\Debug\Wumpus.Form1.resources
+D:\Study\Source Code\C#\Wumpus\Wumpus\obj\Debug\Wumpus.Properties.Resources.resources
+D:\Study\Source Code\C#\Wumpus\Wumpus\obj\Debug\Wumpus.csproj.GenerateResource.Cache
+D:\Study\Source Code\C#\Wumpus\Wumpus\obj\Debug\Wumpus.csproj.CoreCompileInputs.cache
+D:\Study\Source Code\C#\Wumpus\Wumpus\obj\Debug\Wumpus.exe
+D:\Study\Source Code\C#\Wumpus\Wumpus\obj\Debug\Wumpus.pdb
+D:\Study\Source Code\C#\Wumpus\Wumpus\obj\Debug\Wumpus.csprojResolveAssemblyReference.cache
