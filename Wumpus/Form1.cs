@@ -28,7 +28,7 @@ namespace Wumpus
             map.DrawMap(map1);
             state = map.GetMap();
             player.Start(state[x, y], hunter.Images[2]);
-            map.Generate_Obstacle(3, 0, 3, x, y);
+            map.Generate_Obstacle(2, 2, 2, x, y);
 
             foreach (Button e in state)
             {

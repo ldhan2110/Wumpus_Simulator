@@ -92,7 +92,7 @@ namespace Wumpus.A.I
                     string MOVE = Next_Move[rand.Next(0, Next_Move.Count)];
                     result.Add(MOVE);
                     kb.Visited.Add(MOVE);
-                    while(kb.Safe.Contains(MOVE))
+                    while (kb.Safe.Contains(MOVE))
                         kb.Safe.Remove(MOVE);
                     history_move = player.Get_current().Name;
                 }
@@ -140,9 +140,9 @@ namespace Wumpus.A.I
                         }
                     }
 
-                    //if (!kb.Safe.Contains(history_move))
-                    //    result = Move_Loop(player.Get_current().Name, Find_Nearest_Button(player.Get_current().Name));
-                     result.Add(history_move);
+                   
+                    result.Add(history_move);
+                    history_move = player.Get_current().Name;
                     return result;
 
                 }
@@ -160,16 +160,18 @@ namespace Wumpus.A.I
                         if (kb.Safe.Contains(s))
                         {
                             kb.Visited.Add(s);
-                            while(kb.Safe.Contains(s))
+                            while (kb.Safe.Contains(s))
                                 kb.Safe.Remove(s);
                             history_move = player.Get_current().Name;
                             result.Add(s);
                             return result;
                         }
                     }
-                    //if (!kb.Safe.Contains(history_move))
-                      //  result = Move_Loop(player.Get_current().Name, Find_Nearest_Button(player.Get_current().Name));
+
+
+                    
                     result.Add(history_move);
+                    history_move = player.Get_current().Name;
                     return result;
                 }
             }
@@ -193,17 +195,22 @@ namespace Wumpus.A.I
             {
                 Move = Possible_Move(dst);
                 Move.Sort();
+
                 foreach (string s in Move.ToList())
                 {
                     if (!kb.Visited.Contains(s) || Result.Contains(s))
                         Move.Remove(s);
-                    else
+                }
+
+                if (Move.Count > 1)
+                {
+                    foreach (string s in Move.ToList())
                     {
                         temp = s.Split(',');
                         int temp_x = int.Parse(temp[0]);
                         int temp_y = int.Parse(temp[1]);
 
-                        if (Math.Abs(temp_x - x) + Math.Abs(temp_y - y) <= Math.Abs(dst_x - x) + Math.Abs(dst_y - y))
+                        if (Math.Abs(temp_x - x) + Math.Abs(temp_y - y) < Math.Abs(dst_x - x) + Math.Abs(dst_y - y))
                         {
                             dst_x = temp_x;
                             dst_y = temp_y;
@@ -211,8 +218,19 @@ namespace Wumpus.A.I
                             dst = s;
                             break;
                         }
-                    } 
-                    
+
+                    }
+                }
+
+                else
+                {
+                    temp = Move[0].Split(',');
+                    int temp_x = int.Parse(temp[0]);
+                    int temp_y = int.Parse(temp[1]);
+                    dst = Move[0];
+                    dst_x = temp_x;
+                    dst_y = temp_y;
+                    Result.Add(Move[0]);
                 }
             }
             Result.Reverse();
@@ -226,14 +244,14 @@ namespace Wumpus.A.I
             int x = int.Parse(temp[0]);
             int y = int.Parse(temp[1]);
 
-           
+
             temp = kb.Safe[0].Split(',');
             int dst_x = int.Parse(temp[0]);
             int dst_y = int.Parse(temp[1]);
             int MAX = Math.Abs(dst_x - x) + Math.Abs(dst_y - y);
             string result = kb.Safe[0];
 
-            for (int i = 0; i < kb.Safe.Count;i++)
+            for (int i = 0; i < kb.Safe.Count; i++)
             {
                 temp = kb.Safe[i].Split(',');
                 int temp_x = int.Parse(temp[0]);
