@@ -16,17 +16,75 @@ namespace Wumpus.A.I
         public List<string> breeze = new List<string>();
         public List<string> Safe = new List<string>();
         public List<string> Visited = new List<string>();
+      
+
+
+        private List<string> Possible_Move(string e)    //Tạo ra các nút có thể đi từ nút hiện tại
+        {
+            string[] temp = e.Split(',');
+            int x = int.Parse(temp[0]);
+            int y = int.Parse(temp[1]);
+            List<string> Move = new List<string>();
+            StringBuilder move = new StringBuilder();
+            string s;
+            if (x - 1 >= 0)
+            {
+                move.Clear();
+                s = move.Insert(0, (char)(x - 1 + 48) + "," + (char)(y + 48)).ToString();
+                if (this.Pit.IndexOf(s) < 0 || this.Wumpus.IndexOf(s) < 0)
+                    Move.Add(s);
+            }
+
+            if (x + 1 <= 9)
+            {
+                move.Clear();
+                s = move.Insert(0, (char)(x + 1 + 48) + "," + (char)(y + 48)).ToString();
+                if (this.Pit.IndexOf(s) < 0 || this.Wumpus.IndexOf(s) < 0)
+                    Move.Add(move.ToString());
+            }
+
+            if (y + 1 <= 9)
+            {
+                move.Clear();
+                s = move.Insert(0, (char)(x + 48) + "," + (char)(y + 1 + 48)).ToString();
+                if (this.Pit.IndexOf(s) < 0 || this.Wumpus.IndexOf(s) < 0)
+                    Move.Add(move.ToString());
+            }
+
+            if (y - 1 >= 0)
+            {
+                move.Clear();
+                s = move.Insert(0, (char)(x + 48) + "," + (char)(y - 1 + 48)).ToString();
+                if (this.Pit.IndexOf(s) < 0 || this.Wumpus.IndexOf(s) < 0)
+                    Move.Add(move.ToString());
+            }
+            return Move;
+        }
 
         public void Add_stench(string percept)
         {
             stench.Add(percept);
-            this.Infere_wumpus();
+           
         }
 
         public void Add_breeze(string percept)
         {
-            breeze.Add(percept);
-            this.Infere_pit();
+            breeze.Add(percept);                        //Add ô hiện tại vào KB breeze
+
+            List<string> Move = Possible_Move(percept);         //Tạo ra các nước có thể đi
+            foreach (string s in Move.ToList())                  
+            {
+                if (this.Safe.Contains(s) || this.Visited.Contains(s))      //Xóa bỏ các nước đã thăm hoặc an toàn
+                {
+                    Move.Remove(s);
+                    continue;
+                }
+                else                                               //Nếu nước tiếp theo unknown thì kiểm tra
+                {
+                    this.infere_Pit(s);
+                }
+            }
+     
         }
 
         public void Add_Safe(string percept)
@@ -34,154 +92,36 @@ namespace Wumpus.A.I
             Safe.Add(percept);
         }
 
-        private void Infere_pit()
+        private void infere_Pit(string e)                    //Kiểm tra có thể infere nút truyền vào có phải pit hay không ?
         {
-            for (int i = 0; i < breeze.Count; i++)
+            if (this.Pit.Contains(e)) return;
+            int count = 0;
+            List<string> breeze = Possible_Move(e);     //Tạo ra các nút lân cận nút hiện tại
+            foreach (string s in breeze.ToList())
             {
-                string[] temp = breeze[i].Split(',');
-                int x = int.Parse(temp[0]);
-                int y = int.Parse(temp[1]);
-
-                StringBuilder diagnose = new StringBuilder(3);
-                string temp1;
-
-                if (x + 1 <= 9 && y + 1 <= 9)
+                if (this.Visited.Contains(s) && !this.breeze.Contains(s))  //Nếu tồn tại nút lân cận mà đã thăm và không có breeze thì chắc chắn an toàn
                 {
-                    temp1 = diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y + 1)).ToString();
-                    if (!breeze.Contains(temp1))
-                    {
-                        if (Visited.Contains(temp1) || Safe.Contains(temp1))
-                        {
-                            if (Safe.Contains(diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y - 1)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y - 1)).ToString());
-                            if (Safe.Contains(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y + 1)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y + 1)).ToString());
-                        }
-                    }
-                }  //DOWN RIGHT DIAG
-
-                if (x - 1 >= 9 && y + 1 <= 9)
+                    return;
+                }
+                else
                 {
-                    temp1 = diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y + 1)).ToString();
-                    if (!breeze.Contains(temp1))
+                    
+                    if (this.breeze.Contains(s) && !this.Safe.Contains(s))        // Cỏn nếu các nút lân cận có breeze thì add vào Unknown.
                     {
-                        if (Visited.Contains(temp1) || Safe.Contains(temp1))
-                        {
-                            if (!Safe.Contains(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString());
-                            if (!Safe.Contains(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString());
-                        }
+                        count++;
                     }
-                }    //UP RIGHT DIAG
-
-                if (x - 1 >= 0 && y - 1 >= 0)
-                {
-                    temp1 = diagnose.Insert(0, (char)x - 1 + ',' + (char)(y - 1)).ToString();
-                    if (!breeze.Contains(temp1))
-                    {
-                        if (Visited.Contains(temp1) || Safe.Contains(temp1))
-                        {
-                            if (!Safe.Contains(diagnose.Insert(0, (char)(x) + ',' + (char)(y - 1)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x) + ',' + (char)(y - 1)).ToString());
-                            if (Safe.Contains(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString());
-                        }
-                    }
-                }  //up left diag
-
-                if (x + 1 <= 9 && y - 1 >= 0)
-                {
-                    temp1 = diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y - 1)).ToString();
-                    if (!breeze.Contains(temp1))
-                    {
-                        if (Visited.Contains(temp1) || Safe.Contains(temp1))
-                        {
-                            if (!Safe.Contains(diagnose.Insert(0, (char)(x) + ',' + (char)(y - 1)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x) + ',' + (char)(y - 1)).ToString());
-                            if (Safe.Contains(diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y)).ToString());
-                        }
-                    }
-
-                }//DOWN LEFT DIAG
+                }
             }
-        }
-
-        private void Infere_wumpus()
-        {
-            for (int i = 0; i < stench.Count; i++)
+            if (count >= 2 && !this.Pit.Contains(e))            //Nếu số breeze lân cận >= 2 => nút đó là pit
             {
-                string[] temp = stench[i].Split(',');
-                int x = int.Parse(temp[0]);
-                int y = int.Parse(temp[1]);
-
-                StringBuilder diagnose = new StringBuilder(3);
-                string temp1;
-
-                if (x + 1 <= 9 && y + 1 <= 9)
+                this.Pit.Add(e);                                //bỏ vào KB pit
+                if (this.Unknown.Contains(e)) this.Unknown.Remove(e);
+                foreach (string s in breeze)                    //Bỏ các nút lân cận chưa khám phá khỏi KB Unknown
                 {
-                    temp1 = diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y + 1)).ToString();
-                    if (!stench.Contains(temp1))
-                    {
-                        if (Visited.Contains(temp1) || Safe.Contains(temp1))
-                        {
-                            if (Safe.Contains(diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y - 1)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y - 1)).ToString());
-                            if (Safe.Contains(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y + 1)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y + 1)).ToString());
-                        }
-                    }
-                }  //DOWN RIGHT DIAG
-
-                if (x - 1 >= 9 && y + 1 <= 9)
-                {
-                    temp1 = diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y + 1)).ToString();
-                    if (!stench.Contains(temp1))
-                    {
-                        if (Visited.Contains(temp1) || Safe.Contains(temp1))
-                        {
-                            if (!Safe.Contains(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString());
-                            if (!Safe.Contains(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString());
-                        }
-                    }
-                }    //UP RIGHT DIAG
-
-                if (x - 1 >= 0 && y - 1 >= 0)
-                {
-                    temp1 = diagnose.Insert(0, (char)x - 1 + ',' + (char)(y - 1)).ToString();
-                    if (!stench.Contains(temp1))
-                    {
-                        if (Visited.Contains(temp1) || Safe.Contains(temp1))
-                        {
-                            if (!Safe.Contains(diagnose.Insert(0, (char)(x) + ',' + (char)(y - 1)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x) + ',' + (char)(y - 1)).ToString());
-                            if (Safe.Contains(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x - 1) + ',' + (char)(y)).ToString());
-                        }
-                    }
-                }  //up left diag
-
-                if (x + 1 <= 9 && y - 1 >= 0)
-                {
-                    temp1 = diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y - 1)).ToString();
-                    if (!stench.Contains(temp1))
-                    {
-                        if (Visited.Contains(temp1) || Safe.Contains(temp1))
-                        {
-                            if (!Safe.Contains(diagnose.Insert(0, (char)(x) + ',' + (char)(y - 1)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x) + ',' + (char)(y - 1)).ToString());
-                            if (Safe.Contains(diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y)).ToString()))
-                                Safe.Add(diagnose.Insert(0, (char)(x + 1) + ',' + (char)(y)).ToString());
-                        }
-                    }
-
-                }//DOWN LEFT DIAG
-
-
+                    if (this.Unknown.Contains(s)) this.Unknown.Remove(s);       //Bỏ nút này khỏi KB Unknown
+                }
             }
+            else this.Unknown.Add(e);           //Còn nếu chưa đủ dữ kiện thì bỏ vào Unknown.
         }
 
       
