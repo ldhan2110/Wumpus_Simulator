@@ -64,7 +64,21 @@ namespace Wumpus.A.I
         public void Add_stench(string percept)
         {
             stench.Add(percept);
-           
+            List<string> Move = Possible_Move(percept);         //Tạo ra các nước có thể đi
+            foreach (string s in Move.ToList())
+            {
+                if (this.Safe.Contains(s) || this.Visited.Contains(s))      //Xóa bỏ các nước đã thăm hoặc an toàn
+                {
+                    Move.Remove(s);
+                    continue;
+                }
+                else                                               //Nếu nước tiếp theo unknown thì kiểm tra
+                {
+                    this.infere_Wumpus(s);
+                }
+            }
+
+
         }
 
         public void Add_breeze(string percept)
@@ -117,6 +131,38 @@ namespace Wumpus.A.I
                 this.Pit.Add(e);                                //bỏ vào KB pit
                 if (this.Unknown.Contains(e)) this.Unknown.Remove(e);
                 foreach (string s in breeze)                    //Bỏ các nút lân cận chưa khám phá khỏi KB Unknown
+                {
+                    if (this.Unknown.Contains(s)) this.Unknown.Remove(s);       //Bỏ nút này khỏi KB Unknown
+                }
+            }
+            else this.Unknown.Add(e);           //Còn nếu chưa đủ dữ kiện thì bỏ vào Unknown.
+        }
+
+        private void infere_Wumpus(string e)
+        {
+            if (this.Wumpus.Contains(e)) return;
+            int count = 0;
+            List<string> stench = Possible_Move(e);     //Tạo ra các nút lân cận nút hiện tại
+            foreach (string s in stench.ToList())
+            {
+                if (this.Visited.Contains(s) && !this.stench.Contains(s))  //Nếu tồn tại nút lân cận mà đã thăm và không có breeze thì chắc chắn an toàn
+                {
+                    return;
+                }
+                else
+                {
+
+                    if (this.stench.Contains(s) && !this.Safe.Contains(s))        // Cỏn nếu các nút lân cận có breeze thì add vào Unknown.
+                    {
+                        count++;
+                    }
+                }
+            }
+            if (count >= 2 && !this.Wumpus.Contains(e))            //Nếu số Stench lân cận >= 2 => nút đó là Wumpus
+            {
+                this.Pit.Add(e);                                //bỏ vào KB pit
+                if (this.Unknown.Contains(e)) this.Unknown.Remove(e);
+                foreach (string s in stench)                    //Bỏ các nút lân cận chưa khám phá khỏi KB Unknown
                 {
                     if (this.Unknown.Contains(s)) this.Unknown.Remove(s);       //Bỏ nút này khỏi KB Unknown
                 }

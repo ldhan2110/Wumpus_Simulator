@@ -28,7 +28,7 @@ namespace Wumpus
             map.DrawMap(map1);
             state = map.GetMap();
             player.Start(state[x, y], hunter.Images[2]);
-            map.Generate_Obstacle(4, 2, 0, x, y);
+            map.Generate_Obstacle(4, 4, 4, x, y);
 
             foreach (Button e in state)
             {
@@ -68,8 +68,8 @@ namespace Wumpus
             {
                 move = pr.Calculate_Move();
             }
-            
-            if (move.Count == 0 || move[0] is null && move.Count != 0) return;
+
+            if (move.Count == 0 || move[0] is null && move.Count != 0) { MessageBox.Show("No move to go"); return; }
             else
             {
                 string s = move[0];
@@ -87,7 +87,7 @@ namespace Wumpus
 
                 }
                 move.Remove(s);
-        }
+            }
     }
 }
 

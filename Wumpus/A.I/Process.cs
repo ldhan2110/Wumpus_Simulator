@@ -107,7 +107,7 @@ namespace Wumpus.A.I
                 {
                     if (kb.Safe.Count != 0)                     //Nếu không còn nước đi mới, đi lại nước cũ có khả năng ra nước mới cao nhất.
                     {
-                        result = Move_Loop(player.Get_current().Name, kb.Safe[rand.Next(0,kb.Safe.Count-1)]);  //Trả về danh sách các nước đi từ current -> nước mới.
+                        result = Move_Loop(player.Get_current().Name, kb.Safe[kb.Safe.Count - 1]);  //Trả về danh sách các nước đi từ current -> nước mới.
                         history_move = result[result.Count - 2];        //Cập nhật nước cũ
                     }
                 }
@@ -125,67 +125,39 @@ namespace Wumpus.A.I
             else
             {
                 string percept = player.Get_current().Tag.ToString();               //Kiểm tra tình trạng nút hiện tại
+                kb.Visited.Add(player.Get_current().Name);
                 List<string> Next_Move = Possible_Move(player.Get_current().Name);      //Tạo ra các nút có thể đi
                 if (percept.Contains("stench"))                                     //Nếu tình trạng có chứa stench
+                    kb.Add_stench(player.Get_current().Name);               //Add stench vào KB
+
+                if (percept.Contains("breeze"))                                     //Nếu có breeze add vào KB.
+                    kb.Add_breeze(player.Get_current().Name);
+
+                foreach (string s in Next_Move)
                 {
-                    kb.Add_stench(player.Get_current().Name);                       //Add stench vào KB
-                    kb.Visited.Add(player.Get_current().Name);
-                    foreach (string s in Next_Move.ToList())
+                    if (kb.Safe.Contains(s))
                     {
-                        if (kb.Visited.IndexOf(s) >= 0) Next_Move.Remove(s);
+                        kb.Visited.Add(s);
+                        while (kb.Safe.Contains(s))
+                            kb.Safe.Remove(s);
+                        history_move = player.Get_current().Name;
+                        result.Add(s);
+                        return result;
                     }
-                    foreach (string s in Next_Move)
-                    {
-                        if (kb.Safe.Contains(s))
-                        {
-                            kb.Visited.Add(s);
-                            while (kb.Safe.Contains(s))
-                                kb.Safe.Remove(s);
-                            history_move = player.Get_current().Name;
-                            result.Add(s);
-                            return result;
-                        }
-                    }
-
-
-                    result.Add(history_move);
-                    history_move = player.Get_current().Name;
-                    return result;
-
                 }
-                else
+                foreach (string s in Next_Move)
                 {
-                    kb.Add_breeze(player.Get_current().Name);       //Add nút hiện tại có chứa breeze vào KB
-                    kb.Visited.Add(player.Get_current().Name);      //Add nút hiện tại vào KB.Visited
-                    foreach (string s in Next_Move.ToList())
+                    if (kb.Visited.Contains(s) && !this.kb.stench.Contains(s) && !this.kb.breeze.Contains(s))
                     {
-                        if (kb.Visited.IndexOf(s) >= 0) Next_Move.Remove(s);        //Xóa các nút đã thăm rồi ra khỏi Các nước đi
-                        if (kb.Pit.Contains(s) || kb.Unknown.Contains(s)) Next_Move.Remove(s);      //Xóa các nút là pit hoặc chưa biết ra khỏi tập các nút đí
+                        result.Add(s);
+                        history_move = player.Get_current().Name;
+                        return result;
                     }
-
-
-                    if (Next_Move.Count > 0)
-                    {
-                        foreach (string s in Next_Move)         //Lưu tất cả các nút an toàn vào KB an toàn.
-                        {
-                            if (!kb.Safe.Contains(s))
-                                kb.Safe.Add(s);
-                        }
-                        string MOVE = Next_Move[rand.Next(0, Next_Move.Count)];            //Chọn random trong các nước mới
-                        result.Add(MOVE);                                                   //trả về KQ
-                        kb.Visited.Add(MOVE);                                               //Thêm vào các nước đã thăm
-                        while (kb.Safe.Contains(MOVE))                                  // Xóa nước đó khỏi KB an toàn
-                            kb.Safe.Remove(MOVE);
-                        history_move = player.Get_current().Name;               //Cập nhật nước đi cũ
-                    }
-                    else
-                    {
-                        result.Add(history_move);
-                        List<string> history = Possible_Move(history_move);
-                        history_move = history[rand.Next(0, history.Count - 1)];
-                    }
-                    return result;
                 }
+
+                result.Add(history_move);
+                history_move = player.Get_current().Name;
+                return result;
             }
 
         }
@@ -256,7 +228,7 @@ namespace Wumpus.A.I
             int x = int.Parse(temp[0]);
             int y = int.Parse(temp[1]);
 
-          
+
 
             temp = kb.Safe[0].Split(',');
             int dst_x = int.Parse(temp[0]);
