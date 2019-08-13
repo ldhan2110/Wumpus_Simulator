@@ -19,7 +19,7 @@ namespace Wumpus.A.I
       
 
 
-        private List<string> Possible_Move(string e)    //Tạo ra các nút có thể đi từ nút hiện tại
+        public List<string> Possible_Move(string e)    //Tạo ra các nút có thể đi từ nút hiện tại
         {
             string[] temp = e.Split(',');
             int x = int.Parse(temp[0]);

@@ -20,48 +20,6 @@ namespace Wumpus.A.I
             kb.Visited.Add(player.Get_current().Name);
         }
 
-        private List<string> Possible_Move(string e)    //Tạo ra các nút có thể đi từ nút hiện tại
-        {
-            string[] temp = e.Split(',');
-            int x = int.Parse(temp[0]);
-            int y = int.Parse(temp[1]);
-            List<string> Move = new List<string>();
-            StringBuilder move = new StringBuilder();
-            string s;
-            if (x - 1 >= 0)
-            {
-                move.Clear();
-                s = move.Insert(0, (char)(x - 1 + 48) + "," + (char)(y + 48)).ToString();
-                if (kb.Pit.IndexOf(s) < 0 || kb.Wumpus.IndexOf(s) < 0)
-                    Move.Add(s);
-            }
-
-            if (x + 1 <= 9)
-            {
-                move.Clear();
-                s = move.Insert(0, (char)(x + 1 + 48) + "," + (char)(y + 48)).ToString();
-                if (kb.Pit.IndexOf(s) < 0 || kb.Wumpus.IndexOf(s) < 0)
-                    Move.Add(move.ToString());
-            }
-
-            if (y + 1 <= 9)
-            {
-                move.Clear();
-                s = move.Insert(0, (char)(x + 48) + "," + (char)(y + 1 + 48)).ToString();
-                if (kb.Pit.IndexOf(s) < 0 || kb.Wumpus.IndexOf(s) < 0)
-                    Move.Add(move.ToString());
-            }
-
-            if (y - 1 >= 0)
-            {
-                move.Clear();
-                s = move.Insert(0, (char)(x + 48) + "," + (char)(y - 1 + 48)).ToString();
-                if (kb.Pit.IndexOf(s) < 0 || kb.Wumpus.IndexOf(s) < 0)
-                    Move.Add(move.ToString());
-            }
-            return Move;
-        }
-
         public List<string> Calculate_Move()
         {
             Random rand = new Random();
@@ -73,7 +31,7 @@ namespace Wumpus.A.I
 
             if (player.Get_current().Tag is null || player.Get_current().Tag.ToString() == "")  //Nếu là ô trống
             {
-                List<string> Next_Move = Possible_Move(player.Get_current().Name);      //Tạo ra các nước có thể đi
+                List<string> Next_Move = this.kb.Possible_Move(player.Get_current().Name);      //Tạo ra các nước có thể đi
 
                 foreach (string s in Next_Move.ToList())
                 {
@@ -126,7 +84,7 @@ namespace Wumpus.A.I
             {
                 string percept = player.Get_current().Tag.ToString();               //Kiểm tra tình trạng nút hiện tại
                 kb.Visited.Add(player.Get_current().Name);
-                List<string> Next_Move = Possible_Move(player.Get_current().Name);      //Tạo ra các nút có thể đi
+                List<string> Next_Move = this.kb.Possible_Move(player.Get_current().Name);      //Tạo ra các nút có thể đi
                 if (percept.Contains("stench"))                                     //Nếu tình trạng có chứa stench
                     kb.Add_stench(player.Get_current().Name);               //Add stench vào KB
 
@@ -177,7 +135,7 @@ namespace Wumpus.A.I
 
             while (dst != cur)
             {
-                Move = Possible_Move(dst);                      //Generate ra các nút có thể đi từ dst
+                Move = this.kb.Possible_Move(dst);                      //Generate ra các nút có thể đi từ dst
                 Move.Sort();
 
                 foreach (string s in Move.ToList())
