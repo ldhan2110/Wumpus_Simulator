@@ -133,7 +133,7 @@ namespace Wumpus.A.I
                 if (percept.Contains("breeze"))                                     //Nếu có breeze add vào KB.
                     kb.Add_breeze(player.Get_current().Name);
 
-                foreach (string s in Next_Move)
+                foreach (string s in Next_Move)                 //Chọn nước đi an toàn tiếp theo có trong KB Safe
                 {
                     if (kb.Safe.Contains(s))
                     {
@@ -145,7 +145,7 @@ namespace Wumpus.A.I
                         return result;
                     }
                 }
-                foreach (string s in Next_Move)
+                foreach (string s in Next_Move)                 //Nếu không có nước đi an toàn, chọn nước đã thăm rồi mà không có breeze và stench
                 {
                     if (kb.Visited.Contains(s) && !this.kb.stench.Contains(s) && !this.kb.breeze.Contains(s))
                     {
@@ -155,7 +155,7 @@ namespace Wumpus.A.I
                     }
                 }
 
-                result.Add(history_move);
+                result.Add(history_move);                               //Trở về nước đi cũ trước đó
                 history_move = player.Get_current().Name;
                 return result;
             }
