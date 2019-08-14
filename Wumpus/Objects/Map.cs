@@ -157,8 +157,9 @@ namespace Wumpus.Objects
             }
             else
             {
-                UpdateMap(dst, status, action, score,false,player.Get_Score());
                 MessageBox.Show("You Die");
+             
+               
             }
 
         }

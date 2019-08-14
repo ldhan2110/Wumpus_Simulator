@@ -63,7 +63,8 @@ namespace Wumpus.A.I
 
         public void Add_stench(string percept)
         {
-            stench.Add(percept);
+            if (!stench.Contains(percept))
+                stench.Add(percept);
             List<string> Move = Possible_Move(percept);         //Tạo ra các nước có thể đi
             foreach (string s in Move.ToList())
             {
@@ -75,6 +76,7 @@ namespace Wumpus.A.I
                 else                                               //Nếu nước tiếp theo unknown thì kiểm tra
                 {
                     this.infere_Wumpus(s);
+                    
                 }
             }
 
@@ -83,7 +85,8 @@ namespace Wumpus.A.I
 
         public void Add_breeze(string percept)
         {
-            breeze.Add(percept);                        //Add ô hiện tại vào KB breeze
+            if (!breeze.Contains(percept))
+                breeze.Add(percept);                        //Add ô hiện tại vào KB breeze
 
             List<string> Move = Possible_Move(percept);         //Tạo ra các nước có thể đi
             foreach (string s in Move.ToList())                  
@@ -96,6 +99,7 @@ namespace Wumpus.A.I
                 else                                               //Nếu nước tiếp theo unknown thì kiểm tra
                 {
                     this.infere_Pit(s);
+                  
                 }
             }
      
@@ -115,6 +119,7 @@ namespace Wumpus.A.I
             {
                 if (this.Visited.Contains(s) && !this.breeze.Contains(s))  //Nếu tồn tại nút lân cận mà đã thăm và không có breeze thì chắc chắn an toàn
                 {
+                    
                     return;
                 }
                 else
@@ -133,6 +138,7 @@ namespace Wumpus.A.I
                 foreach (string s in breeze)                    //Bỏ các nút lân cận chưa khám phá khỏi KB Unknown
                 {
                     if (this.Unknown.Contains(s)) this.Unknown.Remove(s);       //Bỏ nút này khỏi KB Unknown
+
                 }
             }
             else this.Unknown.Add(e);           //Còn nếu chưa đủ dữ kiện thì bỏ vào Unknown.
@@ -147,6 +153,7 @@ namespace Wumpus.A.I
             {
                 if (this.Visited.Contains(s) && !this.stench.Contains(s))  //Nếu tồn tại nút lân cận mà đã thăm và không có breeze thì chắc chắn an toàn
                 {
+                  
                     return;
                 }
                 else
@@ -160,11 +167,12 @@ namespace Wumpus.A.I
             }
             if (count >= 2 && !this.Wumpus.Contains(e))            //Nếu số Stench lân cận >= 2 => nút đó là Wumpus
             {
-                this.Pit.Add(e);                                //bỏ vào KB pit
+                this.Wumpus.Add(e);                                //bỏ vào KB pit
                 if (this.Unknown.Contains(e)) this.Unknown.Remove(e);
                 foreach (string s in stench)                    //Bỏ các nút lân cận chưa khám phá khỏi KB Unknown
                 {
                     if (this.Unknown.Contains(s)) this.Unknown.Remove(s);       //Bỏ nút này khỏi KB Unknown
+                  
                 }
             }
             else this.Unknown.Add(e);           //Còn nếu chưa đủ dữ kiện thì bỏ vào Unknown.

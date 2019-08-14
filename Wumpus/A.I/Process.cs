@@ -68,7 +68,12 @@ namespace Wumpus.A.I
                         result = Move_Loop(player.Get_current().Name, kb.Safe[kb.Safe.Count - 1]);  //Trả về danh sách các nước đi từ current -> nước mới.
                         history_move = result[result.Count - 2];        //Cập nhật nước cũ
                     }
+                    else
+                    {
+
+                    }
                 }
+
                 return result;
             }
 
@@ -102,6 +107,7 @@ namespace Wumpus.A.I
                         result.Add(s);
                         return result;
                     }
+                    
                 }
                 foreach (string s in Next_Move)                 //Nếu không có nước đi an toàn, chọn nước đã thăm rồi mà không có breeze và stench
                 {
@@ -111,6 +117,7 @@ namespace Wumpus.A.I
                         history_move = player.Get_current().Name;
                         return result;
                     }
+                   
                 }
 
                 result.Add(history_move);                               //Trở về nước đi cũ trước đó
@@ -128,7 +135,7 @@ namespace Wumpus.A.I
             List<string> Move;
             List<string> Result = new List<string>();
 
-
+            Random rand = new Random();
             temp = dst.Split(',');
             int dst_x = int.Parse(temp[0]);                     //Lấy tọa độ nút dst
             int dst_y = int.Parse(temp[1]);
@@ -136,15 +143,15 @@ namespace Wumpus.A.I
             while (dst != cur)
             {
                 Move = this.kb.Possible_Move(dst);                      //Generate ra các nút có thể đi từ dst
-                Move.Sort();
-
+                
+                int count = Result.Count();
                 foreach (string s in Move.ToList())
                 {
                     if (!kb.Visited.Contains(s) || Result.Contains(s))      //Nếu nó đó chưa thăm hoặc đã có trong Result bỏ nút đó đi
                         Move.Remove(s);
                 }
 
-                if (Move.Count > 1)                             //Nếu có nước đi
+                if (Move.Count > 0)                             //Nếu có nước đi
                 {
                     foreach (string s in Move.ToList())         //Lọc nước đi
                     {
@@ -155,24 +162,28 @@ namespace Wumpus.A.I
                         if (Math.Abs(temp_x - x) + Math.Abs(temp_y - y) <= Math.Abs(dst_x - x) + Math.Abs(dst_y - y))        //Nếu tồn tại nước đi ngắn hơn, chọn nước đó
                         {
                             dst_x = temp_x;
-                            dst_y = temp_y;
+                            dst_y = temp_y;                  //Cập nhật lại nút dst
                             Result.Add(s);
                             dst = s;
                             break;
                         }
                     }
-                    if (Result.Count == 0) Result.Add(Move[0]);     //Nếu không tồn tại nước đi nào ngắn hết, chọn nút đầu tiên
+                    if (count == Result.Count())
+                    {
+                        Result.Add(Move[0]);                    //Nếu không có nước đi tối ưu, chọn nút đầu tiên.
+                        temp = Move[0].Split(',');
+                        dst = Move[0];
+                        dst_x = int.Parse(temp[0]);            //Cập nhật lại nút dst
+                        dst_y = int.Parse(temp[1]);
+                    }
                 }
 
-                else                                        //Cập nhật lại nút dst
+                else                                        
                 {
-                    temp = Move[0].Split(',');
-                    int temp_x = int.Parse(temp[0]);
-                    int temp_y = int.Parse(temp[1]);
-                    dst = Move[0];
-                    dst_x = temp_x;
-                    dst_y = temp_y;
-                    Result.Add(Move[0]);
+                    Move = this.kb.Possible_Move(dst);
+                    string s = Move[rand.Next(0, Move.Count - 1)];
+                    Result.Add(s);
+                    dst = s;
                 }
             }
             Result.Reverse();
