@@ -43,6 +43,9 @@ namespace Wumpus
             map.UpdateMap(state[x, y], tbstatus, Keys.Q, score, false, player.Get_Score());
             score.Text = "Score: " + player.Get_Score();
             pr = new Process(player);
+            VISITED_ROOMS = 0;
+            label1.Text = "MAXIMUM ROOMS: " + MAX_ROOMS;
+            label3.Text = "VISITED ROOMS: " + VISITED_ROOMS;
         }
 
 
@@ -64,6 +67,8 @@ namespace Wumpus
             score.Text = "Score: " + player.Get_Score();
             pr = new Process(player);
             VISITED_ROOMS = 0;
+            label1.Text = "MAXIMUM ROOMS: " + MAX_ROOMS;
+            label3.Text = "VISITED ROOMS: " + VISITED_ROOMS;
         }
 
         private void Auto_Click(object sender, EventArgs e)
@@ -116,6 +121,8 @@ namespace Wumpus
                 }
 
                 VISITED_ROOMS++;
+                //label1.Text = "MAXIMUM ROOMS" + MAX_ROOMS;
+                label3.Text = "VISITED ROOMS: " + VISITED_ROOMS;
             }
         }
 
@@ -145,6 +152,8 @@ namespace Wumpus
             score.Text = "Score: " + player.Get_Score();
             pr = new Process(player);
             VISITED_ROOMS = 0;
+            label1.Text = "MAXIMUM ROOMS: " + MAX_ROOMS;
+            label3.Text = "VISITED ROOMS: " + VISITED_ROOMS;
         }
     }
 
