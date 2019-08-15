@@ -20,8 +20,8 @@ namespace Wumpus
         Random rand = new Random();
         Process pr;
         List<string> move = new List<string>();
-        int MAX_ROOMS;
-        int VISITED_ROOMS;
+        int MAX_ROOMS = 10;
+        int VISITED_ROOMS = 0;
 
         public Form1()
         {
@@ -63,11 +63,12 @@ namespace Wumpus
             map.UpdateMap(state[x, y], tbstatus, Keys.Q, score, false, player.Get_Score());
             score.Text = "Score: " + player.Get_Score();
             pr = new Process(player);
+            VISITED_ROOMS = 0;
         }
 
         private void Auto_Click(object sender, EventArgs e)
         {
-            if (VISITED_ROOMS != MAX_ROOMS)
+           if (VISITED_ROOMS != MAX_ROOMS)
             {
                 if (move.Count == 0)
                 {
@@ -113,10 +114,38 @@ namespace Wumpus
                     }
                     move.Remove(s);
                 }
+
+                VISITED_ROOMS++;
             }
         }
 
-        
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // new map
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.ShowDialog();
+            if (dialog.FileName == null || dialog.FileName == "")
+            {
+                return;
+            }
+          
+            map.LoadFromFile(dialog.FileName,map1,out MAX_ROOMS);
+
+            int x = rand.Next(0,map.GET_MAX_ROOMS()-1);
+            int y = rand.Next(0, map.GET_MAX_ROOMS() - 1);
+            state = map.GetMap();
+            foreach (Button f in state)
+            {
+                f.BackColor = Color.Black;
+                //f.KeyDown += Button1_KeyDown;
+                f.Enabled = false;
+            }
+            player.Start(state[0, 0], hunter.Images[0]);
+            map.UpdateMap(state[x, y], tbstatus, Keys.Q, score, false, player.Get_Score());
+            score.Text = "Score: " + player.Get_Score();
+            pr = new Process(player);
+            VISITED_ROOMS = 0;
+        }
     }
 
 }

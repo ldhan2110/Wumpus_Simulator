@@ -22,7 +22,7 @@ namespace Wumpus.A.I
 
         public List<string> Calculate_Move()
         {
-            Random rand = new Random();
+ loop:          Random rand = new Random();
             string[] temp = player.Get_current().Name.Split(',');
             int x = int.Parse(temp[0]);
             int y = int.Parse(temp[1]);
@@ -63,12 +63,16 @@ namespace Wumpus.A.I
                 }
                 else
                 {
-                    Move_Loop: if (kb.Safe.Count != 0)                     //Nếu không còn nước đi mới, đi lại nước cũ có khả năng ra nước mới cao nhất.
+                    if (kb.Safe.Count != 0)                     //Nếu không còn nước đi mới, đi lại nước cũ có khả năng ra nước mới cao nhất.
                     {
                         result = Move_Loop(player.Get_current().Name, kb.Safe[kb.Safe.Count - 1]);  //Trả về danh sách các nước đi từ current -> nước mới.
                         history_move = result[result.Count - 2];        //Cập nhật nước cũ
                     }
-                   
+                    else
+                    {
+                        this.kb.Reinforce_Safe();
+                        goto loop;
+                    }
 
                 }
 
@@ -96,17 +100,22 @@ namespace Wumpus.A.I
 
                 foreach (string s in Next_Move)                 //Chọn nước đi an toàn tiếp theo có trong KB Safe
                 {
-                    if (kb.Safe.Contains(s))
+                    if (this.kb.Safe.Count != 0)
                     {
-                        kb.Visited.Add(s);
-                        while (kb.Safe.Contains(s))
-                            kb.Safe.Remove(s);
-                        history_move = player.Get_current().Name;
-                        result.Add(s);
-                        return result;
+                        if (kb.Safe.Contains(s))
+                        {
+                            kb.Visited.Add(s);
+                            while (kb.Safe.Contains(s))
+                                kb.Safe.Remove(s);
+                            history_move = player.Get_current().Name;
+                            result.Add(s);
+                            return result;
+                        }
                     }
-
+                   
                 }
+
+
                 foreach (string s in Next_Move)                 //Nếu không có nước đi an toàn, chọn nước đã thăm rồi mà không có breeze và stench
                 {
                     if (kb.Visited.Contains(s) && !this.kb.stench.Contains(s) && !this.kb.breeze.Contains(s))

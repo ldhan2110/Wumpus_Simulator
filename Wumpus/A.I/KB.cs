@@ -187,21 +187,18 @@ namespace Wumpus.A.I
                     List<string> move = Possible_Move(s);       //Tạo ra các nước có thể đi
                     foreach(string j in move)
                     {
-                        if (Wumpus.Contains(j) || Visited.Contains(j) || Unknown.Contains(j))      //Nếu nước đi là Pit hoặc thăm rồi thì bỏ qua
-                            continue;
-                        else
+                        if (!Wumpus.Contains(j) && !Visited.Contains(j))      //Nếu nước đi là Pit hoặc thăm rồi thì bỏ qua
                             Safe.Add(j);                        //Add vào KB Safe
                     }
                 }
 
-                foreach (string s in stench)        //Tương tự với breeze
-                {
+                foreach (string s in breeze)        //Tương tự với breeze
+                { 
                     List<string> move = Possible_Move(s);
                     foreach (string j in move)
                     {
-                        if (Pit.Contains(j) || Visited.Contains(j) || Unknown.Contains(j))
-                            continue;
-                        else
+                        if (!Pit.Contains(j) && !Visited.Contains(j))
+                        
                             Safe.Add(j);
                     }
                 }

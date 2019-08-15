@@ -22,9 +22,10 @@ namespace Wumpus.Objects
         private static int ROOM_WIDTH = 35;
         private static int ROOM_HEIGHT = 35;
 
-        private void Generate_Pit(int num_pits,Random rand,int pos_x,int pos_y)
+        public int GET_MAX_ROOMS() { return MAXIMUM_ROOM; }
+        private void Generate_Pit(int num_pits, Random rand, int pos_x, int pos_y)
         {
-            
+
             for (int i = 0; i < num_pits; i++)
             {
                 Loop:
@@ -44,14 +45,14 @@ namespace Wumpus.Objects
             }
         }
 
-        private void Generate_Wumpus(int num_wumpus,Random rand, int pos_x, int pos_y)
+        private void Generate_Wumpus(int num_wumpus, Random rand, int pos_x, int pos_y)
         {
             for (int i = 0; i < num_wumpus; i++)
             {
                 Loop:
                 int x = rand.Next(0, 9);
                 int y = rand.Next(0, 9);
-                if (x == 0 && y == 0 || x == 9 && y == 9 || room[x, y].Tag != null && room[x, y].Tag.ToString().Contains("pit") == true || x==pos_x && y == pos_y)
+                if (x == 0 && y == 0 || x == 9 && y == 9 || room[x, y].Tag != null && room[x, y].Tag.ToString().Contains("pit") == true || x == pos_x && y == pos_y)
                 {
                     goto Loop;
                 }
@@ -84,7 +85,6 @@ namespace Wumpus.Objects
 
         public void DrawMap(Panel map)
         {
-           
             Button oldButton = new Button() { Width = 0, Location = new Point(0, 0), Tag = "0,0" };
 
             for (int i = 0; i < MAXIMUM_ROOM; i++)
@@ -110,7 +110,9 @@ namespace Wumpus.Objects
             }
         }
 
-        public void UpdateMap(Button dst, TextBox status, Keys action, Label score,bool isDie,int Score)
+       
+
+        public void UpdateMap(Button dst, TextBox status, Keys action, Label score, bool isDie, int Score)
         {
             if (isDie == false)
             {
@@ -140,7 +142,7 @@ namespace Wumpus.Objects
                     case Keys.D:
                         {
                             status.Text = "";
-                           
+
                             status.Enabled = true;
                             if (dst.Tag != null)
                             {
@@ -159,21 +161,21 @@ namespace Wumpus.Objects
             else
             {
                 MessageBox.Show("You Die");
-             
-               
+
+
             }
 
         }
 
-        public void Generate_Obstacle(int pits,int gold,int wumpus,int x, int y)
+        public void Generate_Obstacle(int pits, int gold, int wumpus, int x, int y)
         {
             Random rand = new Random();
             num_gold = gold;
             num_wumpus = wumpus;
             num_pit = pits;
-            Generate_Pit(pits,rand,x,y);
-            Generate_Wumpus(wumpus,rand,x,y);
-            Generate_Gold(gold,rand);
+            Generate_Pit(pits, rand, x, y);
+            Generate_Wumpus(wumpus, rand, x, y);
+            Generate_Gold(gold, rand);
         }
 
         public int GetLength()
@@ -186,6 +188,55 @@ namespace Wumpus.Objects
             return room;
         }
 
-   
+        public void LoadFromFile(string filename, Panel map, out int MAX)
+        {
+            map.Controls.Clear();
+            StreamReader rd = null;
+            try
+            {
+                rd = new StreamReader(filename);
+            }
+            catch
+            {
+                MessageBox.Show("File not found, " + filename);
+            }
+
+            string line = "";
+            MAXIMUM_ROOM = int.Parse(rd.ReadLine());
+            room = new Button[MAXIMUM_ROOM, MAXIMUM_ROOM + 1];
+            string[,] s = new string[MAXIMUM_ROOM, MAXIMUM_ROOM + 1];
+            DrawMap(map);
+            for (int i = 0; i < MAXIMUM_ROOM; i++)
+            {
+                line = rd.ReadLine();
+                string[] temp = line.Split('.');
+                int j = 0;
+                foreach (string t in temp)
+                {
+                    if (t == "-")
+                        room[i, j].Tag += null;
+                    if (t == "BS")
+                        room[i, j].Tag += "breeze stench";
+                    if (t == "S")
+                        room[i, j].Tag += "stench";
+                    if (t == "B")
+                        room[i, j].Tag += "breeze";
+                    if (t == "P")
+                        room[i, j].Tag += "Pit";
+                    if (t == "W")
+                        room[i, j].Tag += "Wumpus";
+                    if (j == MAXIMUM_ROOM - 1)
+                        j = 0;
+                    else
+                        j++;
+                }
+
+                
+            }
+
+            line = rd.ReadLine();
+            MAX = int.Parse(line);
+        }
+
     }
 }
