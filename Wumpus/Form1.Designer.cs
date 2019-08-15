@@ -43,6 +43,8 @@
             this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Auto = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,13 +61,13 @@
             // 
             this.map1.Location = new System.Drawing.Point(1, 27);
             this.map1.Name = "map1";
-            this.map1.Size = new System.Drawing.Size(585, 375);
+            this.map1.Size = new System.Drawing.Size(530, 375);
             this.map1.TabIndex = 2;
             // 
             // score
             // 
             this.score.AutoSize = true;
-            this.score.Location = new System.Drawing.Point(592, 112);
+            this.score.Location = new System.Drawing.Point(532, 130);
             this.score.Name = "score";
             this.score.Size = new System.Drawing.Size(41, 13);
             this.score.TabIndex = 3;
@@ -75,15 +77,15 @@
             // 
             this.panel1.BackgroundImage = global::Wumpus.Properties.Resources.wumpusc1;
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel1.Location = new System.Drawing.Point(583, 1);
+            this.panel1.Location = new System.Drawing.Point(533, 1);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(111, 108);
+            this.panel1.Size = new System.Drawing.Size(163, 114);
             this.panel1.TabIndex = 0;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(593, 143);
+            this.label2.Location = new System.Drawing.Point(532, 161);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 13);
             this.label2.TabIndex = 4;
@@ -92,9 +94,9 @@
             // tbstatus
             // 
             this.tbstatus.Enabled = false;
-            this.tbstatus.Location = new System.Drawing.Point(534, 168);
+            this.tbstatus.Location = new System.Drawing.Point(575, 158);
             this.tbstatus.Name = "tbstatus";
-            this.tbstatus.Size = new System.Drawing.Size(158, 20);
+            this.tbstatus.Size = new System.Drawing.Size(109, 20);
             this.tbstatus.TabIndex = 5;
             // 
             // menuStrip1
@@ -146,7 +148,7 @@
             // 
             // Auto
             // 
-            this.Auto.Location = new System.Drawing.Point(593, 210);
+            this.Auto.Location = new System.Drawing.Point(575, 218);
             this.Auto.Name = "Auto";
             this.Auto.Size = new System.Drawing.Size(75, 23);
             this.Auto.TabIndex = 7;
@@ -154,11 +156,31 @@
             this.Auto.UseVisualStyleBackColor = true;
             this.Auto.Click += new System.EventHandler(this.Auto_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(538, 195);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(31, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Input";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(575, 192);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(109, 20);
+            this.textBox1.TabIndex = 8;
+            this.textBox1.Click += new System.EventHandler(this.textBox1_Click);
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(696, 375);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.Auto);
             this.Controls.Add(this.tbstatus);
             this.Controls.Add(this.label2);
@@ -191,6 +213,8 @@
         private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
         private System.Windows.Forms.Button Auto;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

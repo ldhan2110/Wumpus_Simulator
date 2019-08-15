@@ -20,6 +20,9 @@ namespace Wumpus
         Random rand = new Random();
         Process pr;
         List<string> move = new List<string>();
+        int MAX_ROOMS;
+        int VISITED_ROOMS;
+
         public Form1()
         {
             InitializeComponent();
@@ -64,34 +67,61 @@ namespace Wumpus
 
         private void Auto_Click(object sender, EventArgs e)
         {
-            if (move.Count == 0)
+            if (VISITED_ROOMS != MAX_ROOMS)
             {
-                move = pr.Calculate_Move();
-            }
-
-            if (move.Count == 0 || move[0] is null && move.Count != 0) { MessageBox.Show("No move to go"); return; }
-            else
-            {
-                string s = move[0];
-                string[] move_next = s.Split(',');
-                int x = int.Parse(move_next[0]);
-                int y = int.Parse(move_next[1]);
-                if (s.Contains("pick"))
+                if (move.Count == 0)
                 {
-                    map.UpdateMap(state[x, y], tbstatus, Keys.Q, score, player.isDie(), player.Get_Score());
+                    move = pr.Calculate_Move();
                 }
+
+                if (move.Count == 0 || move[0] is null && move.Count != 0) { MessageBox.Show("No move to go"); return; }
                 else
                 {
-                    player.Move(state[x, y], hunter.Images[0]);
-                    map.UpdateMap(state[x, y], tbstatus, Keys.A, score, player.isDie(), player.Get_Score());
+                    string s = move[0];
+                    string[] move_next = s.Split(',');
+                    int x = int.Parse(move_next[0]);
+                    int y = int.Parse(move_next[1]);
+                    string[] p_move = player.Get_current().Name.Split(',');
+                    int p_x = int.Parse(p_move[0]);
+                    int p_y = int.Parse(p_move[1]);
 
+
+
+                    if (s.Contains("pick"))
+                    {
+                        map.UpdateMap(state[x, y], tbstatus, Keys.Q, score, player.isDie(), player.Get_Score());
+                    }
+                    else
+                    {
+                        Image cur;
+                        if (p_x == x && p_y != y)
+                        {
+                            if (p_y > y)
+                                cur = hunter.Images[3];            //Left
+                            else cur = hunter.Images[2];        // Right
+                        }
+                        else
+                        {
+                            if (p_x > x && p_y == y)
+                                cur = hunter.Images[1];            // Down
+                            else cur = hunter.Images[0];            //Up
+                        }
+                        player.Move(state[x, y], cur);
+
+                        map.UpdateMap(state[x, y], tbstatus, Keys.A, score, player.isDie(), player.Get_Score());
+
+                    }
+                    move.Remove(s);
                 }
-                move.Remove(s);
             }
+        }
+
+       
+
+       
     }
-}
 
 }
-    
+
 
 

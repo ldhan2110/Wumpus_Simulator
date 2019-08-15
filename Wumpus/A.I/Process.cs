@@ -63,15 +63,13 @@ namespace Wumpus.A.I
                 }
                 else
                 {
-                    if (kb.Safe.Count != 0)                     //Nếu không còn nước đi mới, đi lại nước cũ có khả năng ra nước mới cao nhất.
+                    Move_Loop: if (kb.Safe.Count != 0)                     //Nếu không còn nước đi mới, đi lại nước cũ có khả năng ra nước mới cao nhất.
                     {
                         result = Move_Loop(player.Get_current().Name, kb.Safe[kb.Safe.Count - 1]);  //Trả về danh sách các nước đi từ current -> nước mới.
                         history_move = result[result.Count - 2];        //Cập nhật nước cũ
                     }
-                    else
-                    {
+                   
 
-                    }
                 }
 
                 return result;
@@ -107,7 +105,7 @@ namespace Wumpus.A.I
                         result.Add(s);
                         return result;
                     }
-                    
+
                 }
                 foreach (string s in Next_Move)                 //Nếu không có nước đi an toàn, chọn nước đã thăm rồi mà không có breeze và stench
                 {
@@ -117,7 +115,7 @@ namespace Wumpus.A.I
                         history_move = player.Get_current().Name;
                         return result;
                     }
-                   
+
                 }
 
                 result.Add(history_move);                               //Trở về nước đi cũ trước đó
@@ -143,7 +141,7 @@ namespace Wumpus.A.I
             while (dst != cur)
             {
                 Move = this.kb.Possible_Move(dst);                      //Generate ra các nút có thể đi từ dst
-                
+
                 int count = Result.Count();
                 foreach (string s in Move.ToList())
                 {
@@ -178,7 +176,7 @@ namespace Wumpus.A.I
                     }
                 }
 
-                else                                        
+                else
                 {
                     Move = this.kb.Possible_Move(dst);
                     string s = Move[rand.Next(0, Move.Count - 1)];

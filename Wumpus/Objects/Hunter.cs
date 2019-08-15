@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace Wumpus.Objects
 {
     class Hunter
-    {
+    { 
         private Button current;
         private int score = 0;
 

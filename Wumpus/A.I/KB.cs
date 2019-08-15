@@ -178,6 +178,35 @@ namespace Wumpus.A.I
             else this.Unknown.Add(e);           //Còn nếu chưa đủ dữ kiện thì bỏ vào Unknown.
         }
 
-      
+        public void Reinforce_Safe()        //Update Safe nếu không còn nước đi
+        {
+            if (Safe.Count == 0)
+            {
+                foreach(string s in stench)             //Với mỗi nút có stench
+                {
+                    List<string> move = Possible_Move(s);       //Tạo ra các nước có thể đi
+                    foreach(string j in move)
+                    {
+                        if (Wumpus.Contains(j) || Visited.Contains(j) || Unknown.Contains(j))      //Nếu nước đi là Pit hoặc thăm rồi thì bỏ qua
+                            continue;
+                        else
+                            Safe.Add(j);                        //Add vào KB Safe
+                    }
+                }
+
+                foreach (string s in stench)        //Tương tự với breeze
+                {
+                    List<string> move = Possible_Move(s);
+                    foreach (string j in move)
+                    {
+                        if (Pit.Contains(j) || Visited.Contains(j) || Unknown.Contains(j))
+                            continue;
+                        else
+                            Safe.Add(j);
+                    }
+                }
+            }
+        }
+
     }
 }
